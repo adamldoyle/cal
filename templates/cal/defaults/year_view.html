@@ -1,0 +1,66 @@
+{% extends "cal/defaults/cal.html" %}
+{% load i18n %}
+{% block bodyclass %}colM{% endblock %}
+
+{% block content %}
+
+<table class="year_calendar">
+	<thead>
+		<tr class="year_header">
+			<th class="arrows"><a href="{% url cal.views.prev_year_view year %}">&lt;&lt;</a></th>
+			<th colspan="2">
+				<select name="year" id="year" onchange="window.location.href=this.value;" style="font-size: 20px;">
+					{% for yr in years %}
+						<option value="{% url cal.views.year_view yr %}" {% ifequal yr year %}selected="selected"{% endifequal %}>{{ yr }}</option>
+					{% endfor %}
+				</select>
+			</th>
+			<th class="arrows"><a href="{% url cal.views.next_year_view year %}">&gt;&gt;</a></th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for monthQuad in months %}
+			<tr>
+				{% for monthArry in monthQuad %}
+					<td valign="top" class="month_td">
+						<table class="small_month_calendar">
+							<thead>
+								<tr>
+									<th colspan="7"><a href="{% url cal.views.month_view year monthArry.2 %}">{{ monthArry.0 }}</a></th>
+								</tr>
+								<tr>
+									<th>{% trans 'M' %}</th>
+									<th>{% trans 'T' %}</th>
+									<th>{% trans 'W' %}</th>
+									<th>{% trans 'T' %}</th>
+									<th>{% trans 'F' %}</th>
+									<th>{% trans 'S' %}</th>
+									<th>{% trans 'S' %}</th>
+								</tr>
+							</thead>
+							<tbody>
+									{% for weekCount, week in monthArry.3 %}
+										<tr>
+											{% for dayArry in week %}
+												
+												{% ifequal dayArry.2 1 %}
+													{% ifnotequal monthArry.1 0 %}
+														<td colspan="{{ monthArry.1 }}">&nbsp;</td>
+													{% endifnotequal %}
+												{% endifequal %}
+												<td class="day {% if dayArry.3 %}has_meals{% endif %}">
+													<a href="{% url cal.views.day_view dayArry.0 dayArry.1 dayArry.2 %}">{{ dayArry.2 }}</a>
+												</td>
+											{% endfor %}
+										</tr>
+									{% endfor %}
+							</tbody>
+						</table>
+					</td>
+				{% endfor %}
+			</tr>		
+		{% endfor %}
+	</tbody>
+</table>
+
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends "cal/defaults/cal.html" %}
+{% load i18n %}
+{% block bodyclass %}colM{% endblock %}
+
+{% block content %}
+
+<center>
+	<table cellspacing="0" cellpadding="5" class="calendar">
+		<thead>
+			<tr class="month_header">
+				<th>&nbsp;</th>
+				<th class="arrows"><a href="{% url cal.views.prev_month_view year month %}">&lt;&lt;</a></th>
+				<th colspan="5">
+					<select name="month" id="month" onchange="window.location.href=this.value;">
+						{% for mth in months %}
+							<option value="{% url cal.views.month_view year forloop.counter %}" {% ifequal forloop.counter month %}selected="selected"{% endifequal %}>{{ mth }}</option>
+						{% endfor %}
+					</select>
+					<select name="year" id="year" onchange="window.location.href=this.value;">
+						{% for yr in years %}
+							<option value="{% url cal.views.month_view yr month %}" {% ifequal yr year %}selected="selected"{% endifequal %}>{{ yr }}</option>
+						{% endfor %}
+					</select>
+				</th>
+				<th class="arrows"><a href="{% url cal.views.next_month_view year month %}">&gt;&gt;</a></th>
+			</tr>
+			<tr class="week_header">
+				<th>&nbsp;</th>
+				<th>{% trans 'Monday' %}</th>
+				<th>{% trans 'Tuesday' %}</th>
+				<th>{% trans 'Wednesday' %}</th>
+				<th>{% trans 'Thursday' %}</th>
+				<th>{% trans 'Friday' %}</th>
+				<th>{% trans 'Saturday' %}</th>
+				<th>{% trans 'Sunday' %}</th>
+			</tr>
+		</thead>
+		<tfoot>
+			<tr>
+				<td colspan="8" style="text-align: center;">
+					{% trans 'View:' %} <a href="{% url cal.views.year_view year %}">{% trans 'Year' %}</a>.
+				</td>
+			</tr>
+		</tfoot>
+		<tbody>
+			{% for weekCount, week in weeks %}			
+				<tr style="height:100px">
+					{% for day in week %}
+						{% if forloop.first %}
+							<td class="left_col {% if forloop.parentloop.first %}top_row{% endif %}"><a href="{% url cal.views.week_view day.0 day.1 day.2 %}">W{{ weekCount }}</a></td>
+						{% endif %}
+						<td width="14%" id="daycell_{{ day.0 }}_{{ day.1 }}_{{ day.2 }}" class="day_cell {% if forloop.parentloop.first %}top_row{% endif %}" valign="top">
+							<div class="day_header">
+								<a href="{% url cal.views.day_view day.0 day.1 day.2 %}" class="day_link">{{ day.2 }}</a>
+							</div>
+							<ul>
+								{% for event in day.3 %}
+									<li id="eventline_{{ event.id }}"><a href="{{ event.get_absolute_url }}" class="event_link">{{ event }}</a> <a href="#" class="remove_link" rel="{{ event.id }}"><img src="{{ MEDIA_URL }}img/admin/icon_deletelink.gif"/></a></li>
+								{% endfor %}
+							</ul>
+						</td>	
+					{% endfor %}
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</center>
+
+{% endblock %}

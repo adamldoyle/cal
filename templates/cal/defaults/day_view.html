@@ -1,0 +1,39 @@
+{% extends "cal/defaults/cal.html" %}
+{% load i18n %}
+{% load filters %}
+{% block content %}
+
+<style type="text/css">
+
+img { border: 0; }
+
+</style>
+
+<h2 class="page_title">
+	<a href="{% url cal.views.prev_day_view year month day %}" class="arrows">&lt;&lt;</a>
+	{% format_datetime_raw "%b %e, %Y" year month day %}
+	<a href="{% url cal.views.next_day_view year month day %}" class="arrows">&gt;&gt;</a>
+</h2>
+
+{% for dayArry in days %}
+	<p>
+		{% if dayArry.3 %}
+			<ul>
+				{% for event in dayArry.3 %}
+					<li><a href="{{ event.get_absolute_url }}">{{ event }}</a> <a href="{{ event.deleteUrl }}"><img src="{{ MEDIA_URL }}img/admin/icon_deletelink.gif"/></a></li>
+				{% endfor %}
+			</ul>
+		{% else %}
+			{% trans 'Nothing scheduled.' %}
+		{% endif %}
+	</p>
+{% endfor %}
+
+<p style="padding-top: 20px; text-align: center;">
+	{% trans 'View:' %} 
+	<a href="{% url cal.views.week_view year month day %}">{% trans 'Week' %}</a>,
+	<a href="{% url cal.views.month_view year month %}">{% trans 'Month' %}</a>,
+	<a href="{% url cal.views.year_view year %}">{% trans 'Year' %}</a>.
+</p>
+
+{% endblock %}
